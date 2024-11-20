@@ -1,7 +1,8 @@
 
 # Git Diagram
 
-```mermaidclassDiagram
+```mermaid
+classDiagram
     class Repository {
         +Contains branches
         +Contains tags
