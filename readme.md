@@ -126,108 +126,107 @@ classDiagram
     WorkingDirectory "1" --> "1" GitIgnore : uses
 ```
 
+# Jenkis
+
 ```mermaid
-@startuml
-' Define classes
-class JenkinsMaster {
-  - name: String
-  - version: String
-  + manageJobs()
-  + scheduleJobs()
-  + distributeTasks()
-}
 
-class JenkinsAgent {
-  - name: String
-  - OS: String
-  - labels: String[]
-  + executeJob()
-  + reportStatus()
-}
+classDiagram
+    class JenkinsMaster {
+        +Manage jobs and agents
+        +Schedule builds
+        +Handle security
+        +Configure system
+        +Distribute tasks
+        +Monitor system health
+    }
+    class JenkinsAgent {
+        +name: string
+        +status: string
+        +labels: array
+        +Execute builds
+        +Run tests
+        +Deploy applications
+    }
+    class Pipeline {
+        +stages: array
+        +environment: dict
+        +Define workflow
+        +Execute stages
+        +Handle failures
+        +Generate reports
+    }
+    class Stage {
+        +name: string
+        +steps: array
+        +Execute steps
+        +Check conditions
+        +Report status
+    }
+    class Job {
+        +name: string
+        +type: string
+        +Configure build steps
+        +Set triggers
+        +Manage workspace
+        +Store artifacts
+    }
+    class BuildQueue {
+        +pending jobs: array
+        +Schedule builds
+        +Manage priorities
+        +Handle dependencies
+    }
+    class Workspace {
+        +path: string
+        +Store build files
+        +Clean workspace
+        +Manage artifacts
+    }
+    class Jenkinsfile {
+        +pipeline script
+        +Define stages
+        +Set environment
+        +Configure triggers
+    }
+    class Plugin {
+        +name: string
+        +version: string
+        +Extend functionality
+        +Add integrations
+    }
+    class Artifact {
+        +name: string
+        +path: string
+        +Store build outputs
+        +Archive results
+    }
+    class Credential {
+        +id: string
+        +type: string
+        +Secure access
+        +Manage secrets
+    }
 
-class Executor {
-  - id: String
-  - status: String
-  + runStep()
-  + updateStatus()
-}
-
-class Job {
-  - name: String
-  - type: String
-  - status: String
-  + defineWorkflow()
-  + maintainBuildHistory()
-}
-
-class Pipeline {
-  - script: String
-  - stages: Stage[]
-  + automateProcess()
-  + visualizeWorkflow()
-}
-
-class Stage {
-  - name: String
-  - steps: Step[]
-  + organizeTasks()
-  + manageDependencies()
-}
-
-class Step {
-  - name: String
-  - command: String
-  + executeAction()
-}
-
-class Jenkinsfile {
-  - path: String
-  + definePipeline()
-}
-
-class Plugin {
-  - name: String
-  - version: String
-  + extendFunctionality()
-  + integrateTools()
-}
-
-class BuildQueue {
-  - queue_id: String
-  - job: Job
-  + enqueueJob()
-  + dequeueJob()
-}
-
-class Artifact {
-  - name: String
-  - path: String
-  + archive()
-  + retrieve()
-}
-
-class Credential {
-  - id: String
-  - type: String
-  + store()
-  + retrieve()
-}
-
-' Define relationships
-JenkinsMaster "1" --> "*" JenkinsAgent : manages >
-JenkinsAgent "1" --> "*" Executor : runs >
-Executor "1" --> "1" Step : executes >
-Job "1" --> "1" Pipeline : defines >
-Pipeline "1" --> "*" Stage : contains >
-Stage "1" --> "*" Step : includes >
-JenkinsMaster "1" --> "*" Job : schedules >
-JenkinsMaster "1" --> "*" BuildQueue : manages >
-BuildQueue "1" --> "1" Job : queues >
-Job "1" --> "*" Artifact : produces >
-Job "1" --> "*" Credential : uses >
-Pipeline "1" --> "1" Jenkinsfile : defined by >
-JenkinsMaster "1" --> "*" Plugin : utilizes >
-Plugin "1" --> "*" JenkinsAgent : extends >
-JenkinsMaster "1" --> "*" Credential : manages >
-@enduml
+    %% Core Relationships
+    JenkinsMaster "1" --> "*" JenkinsAgent : manages
+    JenkinsMaster "1" --> "*" Job : orchestrates
+    JenkinsMaster "1" --> "1" BuildQueue : uses
+    
+    %% Job and Pipeline Relations
+    Job "1" --> "1" Pipeline : defines
+    Job "1" --> "1" Workspace : uses
+    Job "1" --> "*" Artifact : produces
+    
+    %% Pipeline Structure
+    Pipeline "1" --> "*" Stage : contains
+    Pipeline "1" --> "1" Jenkinsfile : defined in
+    
+    %% Agent Relations
+    JenkinsAgent "1" --> "*" Workspace : maintains
+    JenkinsAgent "1" --> "*" Pipeline : executes
+    
+    %% Security and Extensions
+    JenkinsMaster "1" --> "*" Credential : manages
+    JenkinsMaster "1" --> "*" Plugin : uses
+    Job "1" --> "*" Credential : uses
 ```
