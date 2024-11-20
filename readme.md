@@ -51,8 +51,8 @@ classDiagram
         +Remove()
         +Reset()
     }
-    class RemoteRepository {
-        +Mirrors local repository
+    class Localepository {
+        +Mirrors remote repository
         +Has URL
         +Has credentials
         +Push()
