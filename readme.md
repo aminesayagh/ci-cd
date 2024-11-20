@@ -303,3 +303,69 @@ pipeline {
     }
 }
 ```
+# GitHub Action
+
+```mermaid
+classDiagram
+    class Workflow {
+        +name: string
+        +on: trigger
+        +Contains jobs
+        +YAML definition
+        +Environment variables
+    }
+    class Job {
+        +name: string
+        +runs-on: runner
+        +Contains steps
+        +needs: dependencies
+        +conditions
+    }
+    class Step {
+        +name: string
+        +uses: action
+        +run: commands
+        +with: inputs
+        +env: variables
+    }
+    class Runner {
+        +OS type
+        +Environment
+        +Execute jobs
+        +Handle secrets
+    }
+    class Action {
+        +name: string
+        +inputs
+        +outputs
+        +Reusable logic
+    }
+    class Event {
+        +push
+        +pull_request
+        +schedule
+        +manual trigger
+    }
+    class Artifact {
+        +name: string
+        +path: string
+        +retention period
+        +Upload()
+        +Download()
+    }
+    class Secret {
+        +name: string
+        +value: encrypted
+        +scope: repository/org
+    }
+
+    %% Core relationships
+    Event "1" --> "*" Workflow : triggers
+    Workflow "1" --> "1..*" Job : contains
+    Job "1" --> "1..*" Step : contains
+    Job "1" --> "1" Runner : runs on
+    Step "0..1" --> "1" Action : uses
+    Job "1" --> "*" Artifact : produces
+    Job "1" --> "*" Secret : uses
+    Step "1" --> "*" Secret : uses
+```
