@@ -9,14 +9,24 @@ classDiagram
         +Has configuration
         +Initialize()
         +Clone()
-        +Fetch()
+    }
+    class RemoteRepository {
+        +Serves as central repository
+        +Accepts push/pull
+        +Handles authentication
+        +Tracks all branches
+    }
+    class LocalRepository {
+        +Mirrors remote repository
+        +Contains complete history
+        +Manages local branches
         +Push()
         +Pull()
+        +Fetch()
     }
     class Branch {
         +Points to latest commit
         +Contains commits
-        +Has HEAD reference
         +Create()
         +Delete()
         +Checkout()
@@ -30,6 +40,7 @@ classDiagram
         +author: string
         +date: timestamp
         +message: string
+        +hash: string
         +Create()
         +Revert()
         +Cherry-pick()
@@ -51,14 +62,6 @@ classDiagram
         +Remove()
         +Reset()
     }
-    class Localepository {
-        +Mirrors remote repository
-        +Has URL
-        +Has credentials
-        +Push()
-        +Fetch()
-        +Clone()
-    }
     class Tag {
         +References specific commit
         +Has name
@@ -68,8 +71,8 @@ classDiagram
         +Push()
     }
     class HEAD {
-        +Points to current position
-        +References branch/commit
+        +Points to current branch
+        +References current commit
         +Can be detached
         +Move()
         +Detach()
@@ -106,24 +109,37 @@ classDiagram
         +Check file()
     }
 
-    Repository "1" --> "*" Branch : contains
-    Repository "1" --> "*" Tag : contains
-    Repository "1" --> "0..n" RemoteRepository : connected to
-    Repository "1" --> "1" GitConfig : has
-    Repository "1" --> "1" GitIgnore : contains
-    Branch "1" --> "1" HEAD : has current
+    %% Core Repository Structure
+    RemoteRepository "1" <--> "0..n" LocalRepository : sync via push/pull
+    LocalRepository "1" --> "*" Branch : contains
+    LocalRepository "1" --> "*" Tag : contains
+    LocalRepository "1" --> "1" GitConfig : has
+    LocalRepository "1" --> "1" GitIgnore : contains
+
+    %% Branch and Commit Structure
+    Branch "1" --> "1" HEAD : points to current
     Branch "1" --> "*" Commit : contains
     Branch "1" --> "0..n" Branch : merges with
     Commit "1" --> "0..2" Commit : has parent
+
+    %% Working Directory Flow
     WorkingDirectory "1" --> "1" StagingArea : stages changes
     StagingArea "1" --> "1" Commit : creates
-    RemoteRepository "1" <--> "1" Repository : sync via push/pull
+    LocalRepository "1" --> "1" WorkingDirectory : workspace
+    
+    %% References and Tags
     Tag "1" --> "1" Commit : references
+    HEAD "1" --> "1" Branch : points to
+    HEAD "1" --> "1" Commit : references when detached
+
+    %% Workflow Elements
     MergeConflict "0..n" --> "1" WorkingDirectory : resolved in
     PullRequest "0..n" --> "1..2" Branch : connects
     GitIgnore "1" --> "1" WorkingDirectory : filters
-    HEAD "1" --> "1" Commit : points to
-    WorkingDirectory "1" --> "1" GitIgnore : uses
+    
+    %% Config and Settings
+    GitConfig "1" --> "1" LocalRepository : configures
+    GitIgnore "1" --> "1" LocalRepository : filters for
 ```
 
 # Jenkis
