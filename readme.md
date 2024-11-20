@@ -142,7 +142,7 @@ classDiagram
     GitIgnore "1" --> "1" LocalRepository : filters for
 ```
 
-# Jenkis
+# Jenkins
 
 ```mermaid
 
