@@ -1,3 +1,69 @@
+# CI/CD
+
+```mermaid
+classDiagram
+    class Development {
+        +Local environment
+        +Source code
+        +Unit tests
+        +Feature branches
+    }
+    class ContinuousIntegration {
+        +Automated builds
+        +Code quality checks
+        +Integration tests
+        +Security scans
+    }
+    class Staging {
+        +Pre-production
+        +UAT testing
+        +Performance testing
+        +Integration validation
+    }
+    class ContinuousDelivery {
+        +Automated deployment
+        +Environment config
+        +Release packaging
+        +Deployment validation
+    }
+    class Production {
+        +Live environment
+        +Real users
+        +Production data
+        +Monitor metrics
+    }
+    class Monitoring {
+        +Performance metrics
+        +Error tracking
+        +User analytics
+        +System health
+    }
+    class QualityGates {
+        +Test coverage
+        +Code quality
+        +Security checks
+        +Performance criteria
+    }
+    class Feedback {
+        +User feedback
+        +System metrics
+        +Bug reports
+        +Feature requests
+    }
+
+    Development "1" --> "1" ContinuousIntegration : commit triggers
+    ContinuousIntegration "1" --> "1" QualityGates : validates
+    QualityGates "1" --> "1" Staging : passes checks
+    Staging "1" --> "1" ContinuousDelivery : approval triggers
+    ContinuousDelivery "1" --> "1" Production : deploys to
+    Production "1" --> "1" Monitoring : generates
+    Monitoring "1" --> "1" Feedback : produces
+    Feedback "1" --> "1" Development : informs
+
+    QualityGates "1" --> "1" Development : fails/returns
+    Staging "1" --> "1" Development : fails/returns
+    Production "1" --> "1" Staging : rollback if needed
+```
 
 # Git Diagram
 
