@@ -435,3 +435,105 @@ classDiagram
     Job "1" --> "*" Secret : uses
     Step "1" --> "*" Secret : uses
 ```
+# Cloud-Init
+
+```mermaid
+@startuml
+' Define classes
+class CloudInit {
+  +processUserData()
+  +fetchMetadata()
+  +executeModules()
+}
+
+class UserData {
+  -content: String
+  +getContent(): String
+}
+
+class Metadata {
+  -info: Map<String, String>
+  +getInfo(): Map<String, String>
+}
+
+class Datasource {
+  -type: String
+  +fetchUserData(): UserData
+  +fetchMetadata(): Metadata
+}
+
+class CloudConfig {
+  -yamlContent: String
+  +parse(): Configuration
+}
+
+class Configuration {
+  -users: List<User>
+  -packages: List<String>
+  -runcmd: List<String>
+  +getUsers(): List<User>
+  +getPackages(): List<String>
+  +getRunCommands(): List<String>
+}
+
+class Module {
+  -name: String
+  +execute()
+}
+
+class BootStage {
+  -stageName: String
+  +run()
+}
+
+class Handler {
+  -event: String
+  +trigger()
+}
+
+class Pipeline {
+  -stages: List<BootStage>
+  +addStage(stage: BootStage)
+  +runPipeline()
+}
+
+class NetworkConfig {
+  -interfaces: List<Interface>
+  +configureNetwork()
+}
+
+class PackageManager {
+  -managerType: String
+  +installPackages(packages: List<String>)
+}
+
+class Script {
+  -scriptContent: String
+  +executeScript()
+}
+
+class FileManager {
+  -files: List<File>
+  +createFiles()
+  +modifyFiles()
+}
+
+' Define relationships
+CloudInit --> Datasource : uses >
+CloudInit --> UserData : processes >
+CloudInit --> Metadata : processes >
+CloudInit --> CloudConfig : parses >
+CloudConfig --> Configuration : creates >
+CloudInit --> Pipeline : executes >
+Pipeline --> BootStage : contains >
+BootStage --> Module : executes >
+Module --> Handler : may trigger >
+Configuration --> User : defines >
+Configuration --> PackageManager : uses >
+Configuration --> Script : defines >
+BootStage --> NetworkConfig : may include >
+BootStage --> PackageManager : may include >
+BootStage --> Script : may include >
+BootStage --> FileManager : may include >
+@enduml
+```
