@@ -536,3 +536,117 @@ classDiagram
     NetworkConfig "1" --> "1" Metadata : uses
     Handler "1" --> "*" Module : triggers
 ```
+
+# Packer
+
+```mermaid
+classDiagram
+    class Template {
+        +name: string
+        +version: string
+        +description: string
+        +variables: Variable[]
+        +ValidateConfig()
+        +ExecuteBuild()
+    }
+    class Builder {
+        +type: string
+        +platform: string
+        +source_image: string
+        +BuildImage()
+        +ValidateConfig()
+        +HandleFailure()
+    }
+    class Provisioner {
+        +type: string
+        +execute_order: number
+        +configuration: object
+        +InstallSoftware()
+        +ConfigureSystem()
+        +ValidateSetup()
+    }
+    class PostProcessor {
+        +type: string
+        +input: string
+        +output: string
+        +ProcessImage()
+        +OptimizeOutput()
+        +ValidateResult()
+    }
+    class Variable {
+        +name: string
+        +type: string
+        +default: string
+        +description: string
+        +Validate()
+        +GetValue()
+    }
+    class Image {
+        +id: string
+        +platform: string
+        +metadata: object
+        +StoreArtifacts()
+        +ValidateIntegrity()
+    }
+    class SourceImage {
+        +id: string
+        +platform: string
+        +version: string
+        +Validate()
+        +Prepare()
+    }
+    class Artifact {
+        +name: string
+        +type: string
+        +path: string
+        +Store()
+        +Retrieve()
+    }
+    class Plugin {
+        +name: string
+        +version: string
+        +type: string
+        +Initialize()
+        +Execute()
+    }
+    class Handler {
+        +event: string
+        +script: string
+        +Execute()
+        +HandleError()
+    }
+    class MultiBuilder {
+        +platforms: string[]
+        +parallel: boolean
+        +CoordinateBuilds()
+        +ManageArtifacts()
+    }
+
+    %% Core Template Relationships
+    Template "1" --> "*" Builder : contains
+    Template "1" --> "*" Provisioner : defines
+    Template "1" --> "*" PostProcessor : includes
+    Template "1" --> "*" Variable : uses
+    
+    %% Builder Relationships
+    Builder "1" --> "1" SourceImage : uses
+    Builder "1" --> "1" Image : creates
+    Builder "1" --> "*" Handler : triggers
+    
+    %% Image and Artifact Relationships
+    Image "1" --> "*" Artifact : contains
+    PostProcessor "1" --> "*" Artifact : generates
+    
+    %% Plugin Integration
+    Plugin "*" --> "1" Builder : extends
+    Plugin "*" --> "1" Provisioner : extends
+    Plugin "*" --> "1" PostProcessor : extends
+    
+    %% Multi-Builder Relationships
+    MultiBuilder "1" --> "*" Builder : coordinates
+    MultiBuilder "1" --> "*" Image : produces
+    
+    %% Provisioner and Handler
+    Provisioner "1" --> "*" Handler : uses
+    PostProcessor "1" --> "*" Handler : uses
+```
