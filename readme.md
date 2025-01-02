@@ -1,6 +1,32 @@
 # CI/CD
 
 ```mermaid
+stateDiagram-v2
+    [*] --> Init: terraform init
+    Init --> Plan: terraform plan
+    
+    state Plan {
+        [*] --> ReadConfig: Read .tf files
+        ReadConfig --> LoadState: Load state file
+        LoadState --> RefreshState: Refresh current state
+        RefreshState --> GeneratePlan: Generate execution plan
+        GeneratePlan --> [*]
+    }
+    
+    Plan --> Apply: terraform apply
+    
+    state Apply {
+        [*] --> ValidatePlan: Validate plan
+        ValidatePlan --> ExecuteChanges: Execute resource changes
+        ExecuteChanges --> UpdateState: Update state file
+        UpdateState --> [*]
+    }
+    
+    Apply --> [*]: Success/Complete
+    Apply --> Plan: Changes needed
+```
+
+```mermaid
 classDiagram
     class Development {
         +Local environment
