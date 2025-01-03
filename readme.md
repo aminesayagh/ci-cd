@@ -1,6 +1,15 @@
 # CI/CD
 
 ```mermaid
+flowchart LR
+    A(Terraform CLI) --> B(Terraform State)
+    A --> C(Providers)
+    C --> D(Resources)
+    A --> E(Modules)
+    E --> D
+```
+
+```mermaid
 stateDiagram-v2
     [*] --> Init: terraform init
     Init --> Plan: terraform plan
